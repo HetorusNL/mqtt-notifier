@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MQTT Notifier settings</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+    h1 { font-size: 22px; margin: 0 0 16px; }
+    h2 { font-size: 16px; margin: 28px 0 10px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+    .grid .wide { grid-column: 1 / -1; }
+    label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+    label.check { flex-direction: row; align-items: center; gap: 8px; color: var(--fg); font-size: 14px; }
+    small { color: var(--muted); }
+    code { background: var(--surface); padding: 0 4px; border-radius: 4px; }
+    #status { border: 1px solid var(--border); border-left-width: 4px; border-radius: 6px; padding: 8px 12px; white-space: pre-line; }
+    #status[data-state="connected"] { border-left-color: var(--ok); }
+    #status[data-state="connecting"], #status[data-state="offline"] { border-left-color: var(--warn); }
+    #status[data-state="error"], #status[data-state="unconfigured"] { border-left-color: var(--err); }
+    .rule { border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+    .rule-gif { display: flex; gap: 12px; align-items: flex-start; }
+    .rule-gif .preview { width: 96px; height: 72px; object-fit: contain; background: var(--surface); border-radius: 6px; flex: none; }
+    .rule-gif .fields { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .rule-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-top: 20px; flex-wrap: wrap; }
+    #saved, #backupMsg { color: var(--ok); }
+    #saved.error, #backupMsg.error { color: var(--err); }
+    @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>MQTT Notifier</h1>
+  <div id="status" data-state="">Status unknown</div>
+
+  <h2>Broker</h2>
+  <div class="grid">
+    <label class="wide">WebSocket URL
+      <input id="brokerUrl" type="url" placeholder="wss://broker.example.com:8884/mqtt">
+      <small>The broker must have a WebSocket listener (<code>ws://</code> or <code>wss://</code>). The path is often <code>/mqtt</code>.</small>
+    </label>
+    <label>Username <input id="username" type="text" autocomplete="off"></label>
+    <label>Password <input id="password" type="password" autocomplete="new-password"></label>
+    <label>Client ID <input id="clientId" type="text" placeholder="random if empty"></label>
+  </div>
+
+  <h2>Behavior</h2>
+  <div class="grid">
+    <label class="check"><input id="showNotification" type="checkbox"> Show system notification</label>
+    <label class="check"><input id="showPopup" type="checkbox"> Open alert window (shows animated GIF)</label>
+    <label class="check wide"><input id="ignoreRetained" type="checkbox"> Ignore retained messages (avoids re-alerting old messages on every reconnect)</label>
+    <label>Alert window closes after (seconds, 0 = never)
+      <input id="popupSeconds" type="number" min="0" step="1">
+    </label>
+    <label>Alert window size (width × height)
+      <span style="display:flex; gap:6px"><input id="popupWidth" type="number" min="200"><input id="popupHeight" type="number" min="200"></span>
+    </label>
+  </div>
+
+  <h2>Rules</h2>
+  <small>The first matching rule wins. Topic supports the MQTT wildcards <code>+</code> and <code>#</code>.
+    "Payload match" is a regular expression (empty = every message). Title placeholders: <code>{topic}</code>, <code>{payload}</code>.</small>
+  <div id="rules" style="margin-top:12px"></div>
+  <button id="addRule">+ Add rule</button>
+
+  <div class="toolbar">
+    <button id="save" class="primary">Save</button>
+    <button id="reconnect">Reconnect</button>
+    <span id="saved"></span>
+  </div>
+
+  <h2>Backup</h2>
+  <div class="toolbar" style="margin-top:0">
+    <button id="export">Export settings…</button>
+    <button id="import">Import settings…</button>
+    <input id="importFile" type="file" accept=".json,application/json" hidden>
+    <label class="check"><input id="exportPassword" type="checkbox"> Include password in export</label>
+    <span id="backupMsg"></span>
+  </div>
+  <small>Exports the settings as currently shown on this page (including GIFs) to a JSON file. Importing replaces all settings; if the file has no password, the current password is kept.</small>
+
+  <template id="ruleTemplate">
+    <div class="rule">
+      <div class="grid">
+        <label>Topic <input data-field="topic" type="text" placeholder="machine/+/alarm"></label>
+        <label>Payload match (regex) <input data-field="match" type="text" placeholder="ERROR|FAULT"></label>
+        <label class="wide">Title <input data-field="title" type="text" placeholder="MQTT: {topic}"></label>
+      </div>
+      <div class="rule-gif" style="margin-top:10px">
+        <img class="preview" alt="">
+        <div class="fields">
+          <label>GIF / image URL <input data-field="gifUrl" type="url" placeholder="https://… or choose a file"></label>
+          <span><input class="gifFile" type="file" accept="image/*"> <button class="clearGif">Clear</button></span>
+        </div>
+      </div>
+      <div class="rule-actions">
+        <button class="test">Save &amp; test</button>
+        <button class="remove danger">Remove</button>
+      </div>
+    </div>
+  </template>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

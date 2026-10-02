@@ -1,0 +1,52 @@
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --fg: #1d2330;
+  --muted: #667085;
+  --surface: #f2f4f7;
+  --border: #d0d5dd;
+  --accent: #1f6feb;
+  --ok: #1a7f37;
+  --warn: #b54708;
+  --err: #c0392b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16191f;
+    --fg: #e6e8eb;
+    --muted: #98a2b3;
+    --surface: #222731;
+    --border: #3a4250;
+    --accent: #4c8dff;
+    --ok: #3fb950;
+    --warn: #f0a33e;
+    --err: #f06a5d;
+  }
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+input, textarea, button {
+  font: inherit;
+  color: inherit;
+}
+input[type="text"], input[type="password"], input[type="url"], input[type="number"] {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  width: 100%;
+}
+button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.danger { color: var(--err); }
