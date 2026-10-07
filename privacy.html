@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MQTT Notifier – Privacy Policy</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff;
+      --fg: #1d2330;
+      --muted: #667085;
+      --surface: #f2f4f7;
+      --border: #d0d5dd;
+      --accent: #1f6feb;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #16191f;
+        --fg: #e6e8eb;
+        --muted: #98a2b3;
+        --surface: #222731;
+        --border: #3a4250;
+        --accent: #4c8dff;
+      }
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main { max-width: 720px; margin: 0 auto; padding: 40px 16px 64px; }
+    h1 { font-size: 28px; line-height: 1.25; margin: 0 0 4px; }
+    h2 { font-size: 19px; margin: 32px 0 8px; }
+    p, li { overflow-wrap: anywhere; }
+    .meta { color: var(--muted); margin: 0 0 24px; }
+    .summary { background: var(--surface); border-left: 4px solid var(--accent); border-radius: 6px; padding: 12px 16px; }
+    .summary p { margin: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    code { background: var(--surface); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; }
+    a { color: var(--accent); }
+    .table-wrap { overflow-x: auto; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>MQTT Notifier – Privacy Policy</h1>
+  <p class="meta">Effective date: 7 October 2026</p>
+
+  <div class="summary">
+    <p><strong>In short:</strong> MQTT Notifier does not collect, sell or share any of your data. Your settings,
+      including your broker username and password, stay in your own browser and are only sent to the MQTT broker
+      that you configure yourself. The developer runs no servers and receives no data.</p>
+  </div>
+
+  <h2>What the extension does</h2>
+  <p>MQTT Notifier is a browser extension that connects to an MQTT broker of your choice, listens for messages on
+    the topics you configure, and shows a notification and an alert window when a message matches one of your rules.</p>
+
+  <h2>Data the extension stores</h2>
+  <p>The extension stores only the settings you enter on its settings page:</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Data</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Broker WebSocket URL and client ID</td><td>To connect to your MQTT broker.</td></tr>
+        <tr><td>Broker username and password (optional)</td><td>To log in to your MQTT broker.</td></tr>
+        <tr><td>Rules (topics, payload filters, titles)</td><td>To decide which messages trigger an alert.</td></tr>
+        <tr><td>Images / GIFs you upload or link to</td><td>To show in the alert window.</td></tr>
+        <tr><td>Display preferences</td><td>Notification, alert window size and auto-close time.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>These settings are kept in the browser's local extension storage on your device. The connection status and the
+    most recent alert are kept in temporary in-memory storage only and are discarded when the browser closes.</p>
+
+  <h2>Where data is sent</h2>
+  <ul>
+    <li><strong>Your MQTT broker.</strong> The extension sends the client ID, username and password to the broker URL you
+      entered, in order to log in, and subscribes to the topics in your rules. Messages it receives are only used
+      to show alerts on your device.</li>
+    <li><strong>Image URLs you enter.</strong> If you link to a GIF or image by URL (instead of uploading a file), your
+      browser downloads it from that address when an alert is shown, like any other image on the web.</li>
+  </ul>
+  <p>Nothing else is transmitted. The extension contains no analytics, tracking, advertising or telemetry, and it does
+    not send any data to the developer or to any other third party. The developer cannot see your settings or
+    messages.</p>
+
+  <h2>Sharing and sale of data</h2>
+  <p>Your data is not sold, rented, shared or transferred to anyone. It is not used for any purpose other than the
+    extension's single purpose described above, and it is not used to determine creditworthiness or for lending
+    purposes.</p>
+
+  <h2>Browser permissions</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Permission</th><th>Why it is needed</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>storage</code>, <code>unlimitedStorage</code></td><td>Saving your settings and uploaded GIFs locally.</td></tr>
+        <tr><td><code>notifications</code></td><td>Showing system notifications for matching messages.</td></tr>
+        <tr><td><code>alarms</code></td><td>Periodically checking the connection and reconnecting if it was lost.</td></tr>
+        <tr><td><code>system.display</code> (Chrome / Edge only)</td><td>Positioning the alert window in the corner of your screen.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The extension does not request access to websites, tabs or browsing history.</p>
+
+  <h2>Security</h2>
+  <p>Your password is stored unencrypted in your browser's local extension storage, which is protected by your
+    operating system account. We recommend using a <code>wss://</code> (encrypted) broker URL and a broker account
+    that only has the permissions this extension needs. When you export your settings, the password is left out
+    unless you explicitly choose to include it; keep exported files with a password in a safe place.</p>
+
+  <h2>Retention and deletion</h2>
+  <p>Your settings remain on your device until you change them or remove the extension. Removing the extension
+    deletes all of its stored data from your browser.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If this policy changes, the updated version will be published on this page with a new effective date.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy can be sent to: <!-- TODO: replace with your contact address before publishing -->
+    <strong>[your contact e-mail]</strong></p>
+</main>
+</body>
+</html>

@@ -5,7 +5,7 @@ Browser extension (Manifest V3) for Chrome, Edge and Firefox that subscribes to 
 - a system notification (static image), and/or
 - a small, focused alert window in the bottom-right corner that can play an **animated GIF**.
 
-Runs on Windows, macOS, Linux and ChromeOS — anywhere Chrome, Edge or Firefox (121+) runs. No tab needs to be open; the browser just has to be running.
+Runs on Windows, macOS, Linux and ChromeOS — anywhere Chrome, Edge or Firefox (140+) runs. No tab needs to be open; the browser just has to be running.
 
 ## Install
 
