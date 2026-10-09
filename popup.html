@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MQTT Notifier</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { width: 340px; margin: 0; padding: 12px 14px 14px; box-sizing: border-box; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+    h1 { font-size: 15px; margin: 0; }
+    #status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    #status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+    #status[data-state="connected"]::before { background: var(--ok); }
+    #status[data-state="connecting"]::before, #status[data-state="offline"]::before { background: var(--warn); }
+    #status[data-state="error"]::before, #status[data-state="unconfigured"]::before { background: var(--err); }
+    form { display: flex; flex-direction: column; gap: 10px; }
+    label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+    select, textarea {
+      font: inherit; color: inherit; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; box-sizing: border-box; width: 100%;
+    }
+    textarea { resize: vertical; min-height: 64px; font: 13px/1.45 ui-monospace, Consolas, monospace; }
+    .actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    #result { font-size: 12px; min-height: 1.4em; overflow-wrap: anywhere; }
+    #result.ok { color: var(--ok); }
+    #result.error { color: var(--err); }
+    a { color: var(--accent); font-size: 12px; cursor: pointer; }
+    #empty p { margin: 0 0 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MQTT Notifier</h1>
+    <span id="status">…</span>
+  </header>
+
+  <div id="empty" hidden>
+    <p>No rules configured yet.</p>
+  </div>
+
+  <form id="form" hidden>
+    <label>Rule
+      <select id="rule"></select>
+    </label>
+    <label>Message
+      <textarea id="payload" placeholder="Text shown in the alert (Ctrl+Enter to send)"></textarea>
+    </label>
+    <div class="actions">
+      <span id="result"></span>
+      <button id="send" type="submit" class="primary">Send</button>
+    </div>
+  </form>
+
+  <div class="actions" style="margin-top:12px">
+    <a id="settings">Open settings</a>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

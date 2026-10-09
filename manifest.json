@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "MQTT Notifier",
-  "version": "1.1.0",
-  "description": "Shows a notification and an (animated) alert window when a matching MQTT message is received.",
+  "version": "1.2.0",
+  "description": "Shows a notification and an (animated) alert window when a matching MQTT message is received, and sends MQTT messages from the toolbar.",
   "background": {
     "service_worker": "background.js",
     "scripts": ["lib/mqtt.min.js", "background.js"]
@@ -18,7 +18,8 @@
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "action": {
-    "default_title": "MQTT Notifier - open settings"
+    "default_title": "MQTT Notifier",
+    "default_popup": "popup.html"
   },
   "options_ui": {
     "page": "options.html",

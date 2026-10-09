@@ -90,9 +90,31 @@ function onMessage(cfg, topic, payload, packet) {
   // Retained messages arrive on every (re)connect; alerting on them would repeat old alarms.
   if (packet.retain && cfg.ignoreRetained) return;
 
-  const text = payload.toString();
-  const rule = cfg.rules.find((r) => topicMatches(r.topic.trim(), topic) && payloadMatches(r.match, text));
-  if (rule) showAlert(cfg, rule, topic, text);
+  const raw = payload.toString();
+  const msg = parsePayload(raw);
+  const rule = cfg.rules.find((r) => topicMatches(r.topic.trim(), topic) && ruleMatches(r.match, msg));
+  if (rule) showAlert(cfg, rule, topic, msg);
+}
+
+// Messages in our format are JSON: {"type": "nyan_surf", "message": "text to show"}.
+// Anything else (plain text, other JSON) is treated as a raw message.
+function parsePayload(raw) {
+  try {
+    const data = JSON.parse(raw);
+    if (data && typeof data === 'object' && !Array.isArray(data) && ('type' in data || 'message' in data)) {
+      return { structured: true, type: String(data.type ?? ''), message: String(data.message ?? ''), raw };
+    }
+  } catch {
+    // Not JSON.
+  }
+  return { structured: false, type: '', message: raw, raw };
+}
+
+function ruleMatches(pattern, msg) {
+  if (!pattern) return true;
+  // The type must match completely, so rule "nyan" doesn't fire for type "nyan_surf";
+  // raw messages are searched, as they have no type to compare against.
+  return msg.structured ? fullMatch(pattern, msg.type) : payloadMatches(pattern, msg.raw);
 }
 
 function topicMatches(filter, topic) {
@@ -107,7 +129,6 @@ function topicMatches(filter, topic) {
 }
 
 function payloadMatches(pattern, text) {
-  if (!pattern) return true;
   try {
     return new RegExp(pattern).test(text);
   } catch {
@@ -116,21 +137,33 @@ function payloadMatches(pattern, text) {
   }
 }
 
-function fillTemplate(template, topic, text) {
-  return template.replaceAll('{topic}', topic).replaceAll('{payload}', text);
+function fullMatch(pattern, text) {
+  // Identical text always matches, so a message sent for a regex rule (type "alarm|fault") triggers that rule.
+  if (text === pattern) return true;
+  try {
+    return new RegExp(`^(?:${pattern})$`).test(text);
+  } catch {
+    return text === pattern;
+  }
 }
 
-async function showAlert(cfg, rule, topic, text) {
-  const title = fillTemplate(rule.title || 'MQTT: {topic}', topic, text);
+function fillTemplate(template, values) {
+  return template.replace(/\{(topic|type|message|payload)\}/g, (_, key) => values[key] ?? '');
+}
+
+async function showAlert(cfg, rule, topic, msg) {
+  const title = fillTemplate(rule.title || 'MQTT: {topic}', { topic, type: msg.type, message: msg.message, payload: msg.raw });
   // Only the rule id is stored; the alert window reads the (possibly large) GIF from the config.
-  await chrome.storage.session.set({ lastAlert: { ruleId: rule.id, title, topic, payload: text, at: Date.now() } });
+  await chrome.storage.session.set({
+    lastAlert: { ruleId: rule.id, title, topic, type: msg.type, message: msg.message, at: Date.now() },
+  });
 
   if (cfg.showNotification) {
     chrome.notifications.create({
       type: 'basic',
       iconUrl: 'icons/icon128.png',
       title,
-      message: text.slice(0, 250),
+      message: (msg.message || msg.type || topic).slice(0, 250),
       // Firefox rejects any option besides type, title, message and iconUrl.
       ...(isFirefox ? {} : { priority: 2 }),
     });
@@ -190,19 +223,39 @@ chrome.notifications.onClicked.addListener(async (notificationId) => {
   openPopup(await getConfig());
 });
 
-chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage());
-
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.config) connect();
 });
 
-chrome.runtime.onMessage.addListener((msg) => {
+function publish(topic, type, message) {
+  if (!topic || /[+#]/.test(topic)) return Promise.resolve({ ok: false, error: 'Topic must not be empty or contain + or #.' });
+  if (!client?.connected) return Promise.resolve({ ok: false, error: 'Not connected to the broker.' });
+
+  // QoS 1 so the callback only fires once the broker has acknowledged the message.
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve({ ok: false, error: 'The broker did not acknowledge the message in time.' }), 10000);
+    const payload = JSON.stringify(type ? { type, message: message ?? '' } : { message: message ?? '' });
+    client.publish(topic, payload, { qos: 1 }, (err) => {
+      clearTimeout(timer);
+      resolve(err ? { ok: false, error: err.message } : { ok: true });
+    });
+  });
+}
+
+chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.type === 'reconnect') connect();
   if (msg.type === 'test') {
     getConfig().then((cfg) => {
       const rule = cfg.rules.find((r) => r.id === msg.ruleId);
-      if (rule) showAlert(cfg, rule, rule.topic.replace(/[+#]/g, 'test'), msg.payload ?? 'Test message');
+      const message = msg.payload ?? 'Test message';
+      const test = { structured: true, type: rule.match, message, raw: JSON.stringify({ type: rule.match, message }) };
+      if (rule) showAlert(cfg, rule, rule.topic.replace(/[+#]/g, 'test'), test);
     });
+  }
+  if (msg.type === 'publish') {
+    publish(msg.topic, msg.msgType, msg.message).then(sendResponse);
+    // Keeps the response channel open for the async reply (Chrome ignores a returned promise).
+    return true;
   }
 });
 

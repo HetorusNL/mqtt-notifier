@@ -16,8 +16,9 @@ async function render() {
 
   document.title = lastAlert.title;
   el('title').textContent = lastAlert.title;
-  el('payload').textContent = lastAlert.payload;
-  el('meta').textContent = `${lastAlert.topic} · ${new Date(lastAlert.at).toLocaleString()}`;
+  el('payload').textContent = lastAlert.message;
+  el('payload').hidden = !lastAlert.message;
+  el('meta').textContent = [lastAlert.topic, lastAlert.type, new Date(lastAlert.at).toLocaleString()].filter(Boolean).join(' · ');
 
   startCountdown(config.popupSeconds ?? 15);
 }

@@ -48,7 +48,7 @@
 <body>
 <main>
   <h1>MQTT Notifier – Privacy Policy</h1>
-  <p class="meta">Effective date: 7 October 2026</p>
+  <p class="meta">Effective date: 9 October 2026</p>
 
   <div class="summary">
     <p><strong>In short:</strong> MQTT Notifier does not collect, sell or share any of your data. Your settings,
@@ -58,7 +58,8 @@
 
   <h2>What the extension does</h2>
   <p>MQTT Notifier is a browser extension that connects to an MQTT broker of your choice, listens for messages on
-    the topics you configure, and shows a notification and an alert window when a message matches one of your rules.</p>
+    the topics you configure, and shows a notification and an alert window when a message matches one of your rules.
+    It can also send messages you type to one of your configured topics.</p>
 
   <h2>Data the extension stores</h2>
   <p>The extension stores only the settings you enter on its settings page:</p>
@@ -70,9 +71,10 @@
       <tbody>
         <tr><td>Broker WebSocket URL and client ID</td><td>To connect to your MQTT broker.</td></tr>
         <tr><td>Broker username and password (optional)</td><td>To log in to your MQTT broker.</td></tr>
-        <tr><td>Rules (topics, payload filters, titles)</td><td>To decide which messages trigger an alert.</td></tr>
+        <tr><td>Rules (topics, types, titles)</td><td>To decide which messages trigger an alert.</td></tr>
         <tr><td>Images / GIFs you upload or link to</td><td>To show in the alert window.</td></tr>
         <tr><td>Display preferences</td><td>Notification, alert window size and auto-close time.</td></tr>
+        <tr><td>Last used rule and message</td><td>To pre-fill the send popup next time.</td></tr>
       </tbody>
     </table>
   </div>
@@ -84,6 +86,8 @@
     <li><strong>Your MQTT broker.</strong> The extension sends the client ID, username and password to the broker URL you
       entered, in order to log in, and subscribes to the topics in your rules. Messages it receives are only used
       to show alerts on your device.</li>
+    <li><strong>Messages you send.</strong> When you use the toolbar popup to send a message, the selected rule's topic and type, together with the message text you entered,
+      are published to your broker. The last rule and message you used are remembered locally so you can send them again.</li>
     <li><strong>Image URLs you enter.</strong> If you link to a GIF or image by URL (instead of uploading a file), your
       browser downloads it from that address when an alert is shown, like any other image on the web.</li>
   </ul>

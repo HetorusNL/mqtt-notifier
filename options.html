@@ -59,7 +59,10 @@
 
   <h2>Rules</h2>
   <small>The first matching rule wins. Topic supports the MQTT wildcards <code>+</code> and <code>#</code>.
-    "Payload match" is a regular expression (empty = every message). Title placeholders: <code>{topic}</code>, <code>{payload}</code>.</small>
+    Messages are sent as <code>{"type": "…", "message": "…"}</code>. "Type" must match a message's type exactly
+    (a regular expression like <code>alarm|fault</code> also works; empty = every message). For plain-text messages
+    from other senders, "Type" is searched in the whole text instead.
+    Title placeholders: <code>{topic}</code>, <code>{type}</code>, <code>{message}</code>, <code>{payload}</code> (raw).</small>
   <div id="rules" style="margin-top:12px"></div>
   <button id="addRule">+ Add rule</button>
 
@@ -83,7 +86,7 @@
     <div class="rule">
       <div class="grid">
         <label>Topic <input data-field="topic" type="text" placeholder="machine/+/alarm"></label>
-        <label>Payload match (regex) <input data-field="match" type="text" placeholder="ERROR|FAULT"></label>
+        <label>Type <input data-field="match" type="text" placeholder="nyan_surf"></label>
         <label class="wide">Title <input data-field="title" type="text" placeholder="MQTT: {topic}"></label>
       </div>
       <div class="rule-gif" style="margin-top:10px">
