@@ -72,6 +72,7 @@ If the broker uses `wss://` with a self-signed certificate, the certificate must
 
 - Credentials are stored unencrypted in `chrome.storage.local`. Use a read-only broker account.
 - Retained messages are ignored by default so old alarms don't re-trigger on every reconnect.
+- The alert window opens **without taking focus**, so typing in another program isn't interrupted. Browsers can't show an extension window on top without focusing it, so it opens behind the active window; the system notification (and a flashing taskbar button) tells you it's there. Enable **Focus the alert window when it opens** to bring it to the front instead (Chrome/Edge; Firefox on Windows refuses to take focus from another program and only flashes the taskbar button).
 - A burst of messages reuses the single alert window; it shows the latest message. Hovering it pauses auto-close; `Esc` closes it.
 - The MQTT keepalive is 20 s: Chrome keeps an MV3 service worker alive only while its WebSocket has traffic at least every 30 s. A 1-minute alarm reconnects if the worker was stopped anyway.
 - Firefox runs the background as an event page that unloads after 30 s without extension API calls; WebSocket traffic doesn't count there. A `runtime.getPlatformInfo()` call every 20 s keeps it loaded.

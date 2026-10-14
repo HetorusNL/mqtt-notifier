@@ -17,6 +17,7 @@ const DEFAULT_CONFIG = {
   ignoreRetained: true,
   showNotification: true,
   showPopup: true,
+  focusPopup: false,
   popupSeconds: 15,
   popupWidth: 380,
   popupHeight: 440,
@@ -181,7 +182,8 @@ async function openPopupNow(cfg) {
   const { popupWindowId } = await chrome.storage.session.get('popupWindowId');
   if (popupWindowId != null) {
     try {
-      await chrome.windows.update(popupWindowId, { focused: true, drawAttention: true });
+      // The open window already shows the new alert; only bring it forward when the user asked for that.
+      await chrome.windows.update(popupWindowId, cfg.focusPopup ? { focused: true, drawAttention: true } : { drawAttention: true });
       return;
     } catch {
       // Window was closed; open a new one.
@@ -200,7 +202,10 @@ async function openPopupNow(cfg) {
     // Let the browser choose the position.
   }
 
-  const win = await chrome.windows.create({ url: 'alert.html', type: 'popup', width, height, left, top, focused: true });
+  // Unfocused by default, so an alert doesn't take the keyboard away from whatever the user is typing in.
+  const win = await chrome.windows.create({
+    url: 'alert.html', type: 'popup', width, height, left, top, focused: cfg.focusPopup,
+  });
   await chrome.storage.session.set({ popupWindowId: win.id });
 }
 

@@ -1,9 +1,9 @@
 const el = (id) => document.getElementById(id);
 const FIELDS = ['brokerUrl', 'username', 'password', 'clientId', 'popupSeconds', 'popupWidth', 'popupHeight'];
-const CHECKS = ['showNotification', 'showPopup', 'ignoreRetained'];
+const CHECKS = ['showNotification', 'showPopup', 'focusPopup', 'ignoreRetained'];
 const DEFAULTS = {
   brokerUrl: '', username: '', password: '', clientId: '',
-  ignoreRetained: true, showNotification: true, showPopup: true,
+  ignoreRetained: true, showNotification: true, showPopup: true, focusPopup: false,
   popupSeconds: 15, popupWidth: 380, popupHeight: 440,
   rules: [],
 };
